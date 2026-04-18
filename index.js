@@ -41,6 +41,7 @@ If you cannot identify it, set identified to false and use empty strings for all
     );
 
     const data = await response.json();
+    console.error('GEMINI RESPONSE:', JSON.stringify(data));
     const text = data.candidates[0].content.parts[0].text;
     const clean = text.replace(/```json|```/g, '').trim();
     const result = JSON.parse(clean);
