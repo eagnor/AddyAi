@@ -47,7 +47,8 @@ If you cannot identify it, set identified to false and use empty strings for all
     res.json(result);
 
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('FULL ERROR:', JSON.stringify(err.message));
+res.status(500).json({ error: err.message });
   }
 });
 
