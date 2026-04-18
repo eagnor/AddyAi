@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AddyAi — Stop DMing for locations</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:18px 40px;border-bottom:0.5px solid #1e1e1e;background:#050508}
+.logo{font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.5px}
+.logo span{color:#6c8fff}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-link{color:#555;font-size:13px;text-decoration:none}
+.nav-btn{background:#6c8fff;color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer}
+.hero{text-align:center;padding:80px 20px 20px;background:#050508}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:#0f0f18;color:#6c8fff;font-size:12px;padding:6px 14px;border-radius:20px;margin-bottom:24px;border:0.5px solid #1e1e3a}
+.dot{width:6px;height:6px;background:#6c8fff;border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero h1{font-size:48px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:18px;letter-spacing:-1.5px}
+.hero h1 .accent{color:#6c8fff}
+.hero h1 .strike{text-decoration:line-through;color:#333}
+.hero p{font-size:16px;color:#666;max-width:420px;margin:0 auto 36px;line-height:1.7}
+.upload-area{background:#0c0c14;border:1.5px dashed #2a2a3a;border-radius:20px;padding:44px 24px;max-width:520px;margin:0 auto;cursor:pointer;transition:all 0.2s}
+.upload-area:hover{border-color:#6c8fff;background:#0f0f1c}
+.upload-icon-wrap{width:56px;height:56px;background:#13131f;border:0.5px solid #2a2a3a;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px}
+.upload-area h3{color:#ccc;font-size:15px;font-weight:500;margin-bottom:6px}
+.upload-area p{color:#444;font-size:13px;margin-bottom:20px}
+.upload-btn{background:#6c8fff;color:#fff;border:none;padding:13px 28px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%}
+.upload-btn:hover{background:#5a7aff}
+.preview-img{width:100%;border-radius:12px;max-height:240px;object-fit:cover;margin-bottom:16px;display:none}
+.loading-wrap{display:none;margin:16px auto;max-width:520px}
+.loading-bar{height:3px;background:#1a1a2a;border-radius:2px;overflow:hidden;margin-bottom:10px}
+.loading-bar-fill{height:100%;width:40%;background:#6c8fff;border-radius:2px;animation:slide 1.2s infinite}
+@keyframes slide{0%{margin-left:-40%}100%{margin-left:100%}}
+.loading-text{color:#555;font-size:13px}
+.result{display:none;background:#0c0c14;border:0.5px solid #1e1e2e;border-radius:16px;padding:20px;margin:16px auto 0;text-align:left;max-width:520px}
+.result-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.result-pin{width:42px;height:42px;background:#13131f;border:0.5px solid #2a2a3a;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.result-name{color:#fff;font-size:18px;font-weight:700;margin-bottom:3px;letter-spacing:-0.3px}
+.result-loc{color:#555;font-size:13px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.result-item{background:#13131f;border-radius:10px;padding:11px 13px}
+.result-label{color:#444;font-size:11px;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.result-value{color:#ccc;font-size:13px;font-weight:500}
+.result-desc{color:#666;font-size:13px;line-height:1.7;margin-bottom:16px}
+.maps-btn{display:block;text-align:center;background:#13131f;color:#6c8fff;border:0.5px solid #2a2a3a;padding:11px;border-radius:10px;font-size:13px;font-weight:500;text-decoration:none;cursor:pointer}
+.maps-btn:hover{background:#1a1a2a}
+.error{color:#ff6b6b;font-size:13px;margin:12px auto;display:none;max-width:520px;text-align:center}
+.how{padding:70px 20px;background:#050508;text-align:center;border-top:0.5px solid #111}
+.how h2{color:#fff;font-size:28px;font-weight:700;margin-bottom:8px;letter-spacing:-0.5px}
+.how-sub{color:#555;font-size:14px;margin-bottom:40px}
+.steps{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;max-width:680px;margin:0 auto}
+.step{background:#0c0c14;border:0.5px solid #1e1e2e;border-radius:16px;padding:22px 18px;flex:1;min-width:160px;max-width:200px;text-align:left}
+.step-num{width:30px;height:30px;background:#13131f;border:0.5px solid #2a2a3a;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#6c8fff;font-size:13px;font-weight:700;margin-bottom:12px}
+.step h4{color:#ccc;font-size:14px;font-weight:600;margin-bottom:5px}
+.step p{color:#444;font-size:12px;line-height:1.6}
+.footer{text-align:center;padding:24px;border-top:0.5px solid #111;color:#333;font-size:12px;background:#050508}
+.footer span{color:#444}
+</style>
+</head>
+<body style="background:#050508">
+
+<div class="nav">
+  <div class="logo">Addy<span>Ai</span></div>
+  <div class="nav-right">
+    <a class="nav-link" href="#how">How it works</a>
+    <button class="nav-btn">Try free</button>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-badge"><div class="dot"></div> AI location detection</div>
+  <h1>Stop <span class="strike">DMing</span> for<br><span class="accent">locations.</span></h1>
+  <p>Upload any screenshot from a reel or travel video. AddyAi instantly tells you exactly where it is — no DMs needed.</p>
+
+  <div class="upload-area" id="upload-area" onclick="document.getElementById('file-in').click()">
+    <input type="file" id="file-in" accept="image/*" style="display:none">
+    <img id="preview" class="preview-img">
+    <div id="upload-prompt">
+      <div class="upload-icon-wrap">🖼️</div>
+      <h3>Drop your screenshot here</h3>
+      <p>Works with reels, TikToks, travel photos</p>
+    </div>
+    <button class="upload-btn" id="upload-btn" onclick="handleBtn(event)">Upload a screenshot</button>
+  </div>
+
+  <div class="loading-wrap" id="loading">
+    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+    <p class="loading-text">AddyAi is identifying the location...</p>
+  </div>
+
+  <div class="result" id="result"></div>
+  <div class="error" id="error"></div>
+</div>
+
+<div class="how" id="how">
+  <h2>How AddyAi works</h2>
+  <p class="how-sub">From screenshot to destination in seconds</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Screenshot it</h4>
+      <p>Grab any frame from a reel or travel video you love</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Upload it</h4>
+      <p>Drop your screenshot into AddyAi — takes 2 seconds</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Explore it</h4>
+      <p>Get the exact location, best time to visit and a Maps link</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">© 2026 AddyAi · <span>Find every place. No DMs needed.</span></div>
+
+<script>
+let base64=null,mime='image/jpeg';
+document.getElementById('file-in').addEventListener('change',e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  mime=file.type||'image/jpeg';
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    base64=ev.target.result.split(',')[1];
+    const preview=document.getElementById('preview');
+    preview.src=ev.target.result;
+    preview.style.display='block';
+    document.getElementById('upload-prompt').style.display='none';
+    document.getElementById('upload-btn').textContent='Identify this location';
+    document.getElementById('result').style.display='none';
+    document.getElementById('error').style.display='none';
+  };
+  reader.readAsDataURL(file);
+});
+
+function handleBtn(e){
+  e.stopPropagation();
+  if(!base64){document.getElementById('file-in').click();return;}
+  identify();
+}
+
+async function identify(){
+  const loading=document.getElementById('loading');
+  const result=document.getElementById('result');
+  const error=document.getElementById('error');
+  const btn=document.getElementById('upload-btn');
+  loading.style.display='block';
+  result.style.display='none';
+  error.style.display='none';
+  btn.disabled=true;
+  btn.textContent='Identifying...';
+  try{
+    const res=await fetch('https://addyai.onrender.com/identify',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({imageBase64:base64,mimeType:mime})
+    });
+    if(!res.ok)throw new Error('Server error '+res.status);
+    const loc=await res.json();
+    loading.style.display='none';
+    btn.disabled=false;
+    btn.textContent='Try another photo';
+    base64=null;
+    if(!loc.identified){
+      error.style.display='block';
+      error.textContent="Couldn't identify this location. Try a clearer or wider photo.";
+      return;
+    }
+    const confColor=loc.confidence==='high'?'#4caf50':loc.confidence==='medium'?'#ff9800':'#ff6b6b';
+    const mapsUrl='https://www.google.com/maps/search/'+encodeURIComponent(loc.google_maps_query||loc.place_name);
+    result.style.display='block';
+    result.innerHTML=`
+      <div class="result-top">
+        <div class="result-pin">📍</div>
+        <div>
+          <div class="result-name">${loc.place_name}</div>
+          <div class="result-loc">${[loc.city,loc.country,loc.continent].filter(Boolean).join(' · ')}</div>
+        </div>
+      </div>
+      <div class="result-grid">
+        <div class="result-item"><div class="result-label">Best time</div><div class="result-value">${loc.best_time_to_visit||'—'}</div></div>
+        <div class="result-item"><div class="result-label">Confidence</div><div class="result-value" style="color:${confColor}">${loc.confidence.charAt(0).toUpperCase()+loc.confidence.slice(1)}</div></div>
+      </div>
+      <div class="result-desc">${loc.description}</div>
+      <div class="maps-btn" onclick="window.open('${mapsUrl}','_blank')">Open in Google Maps →</div>`;
+  }catch(err){
+    loading.style.display='none';
+    btn.disabled=false;
+    btn.textContent='Identify this location';
+    error.style.display='block';
+    error.textContent='Something went wrong: '+err.message;
+  }
+}
+</script>
+</body>
+</html>
