@@ -18,7 +18,7 @@ app.post('/identify', async (req, res) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'google/gemma-4-31b-it:free',
+        model: 'qwen/qwen2.5-vl-72b-instruct:free',
         messages: [{
           role: 'user',
           content: [
