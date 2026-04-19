@@ -11,14 +11,15 @@ app.post('/identify', async (req, res) => {
   try {
     const { imageBase64, mimeType } = req.body;
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'mistralai/mistral-small-3.1-24b-instruct:free',
+        model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+        max_tokens: 1000,
         messages: [{
           role: 'user',
           content: [
@@ -49,7 +50,7 @@ If you cannot identify it, set identified to false and use empty strings for all
     });
 
     const data = await response.json();
-    console.error('OPENROUTER RESPONSE:', JSON.stringify(data));
+    console.error('GROQ RESPONSE:', JSON.stringify(data));
     const text = data.choices[0].message.content;
     const clean = text.replace(/```json|```/g, '').trim();
     const result = JSON.parse(clean);
