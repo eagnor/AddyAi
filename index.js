@@ -9,7 +9,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/identify', async (req, res) => {
   try {
-    const { imageBase64, mimeType } = req.body;
+    let { imageBase64, mimeType } = req.body;
+
+    const sizeInMB = (imageBase64.length * 3/4) / (1024 * 1024);
+    if (sizeInMB > 4) {
+      return res.status(400).json({ error: 'Image too large. Please use a screenshot under 4MB.' });
+    }
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -50,7 +55,12 @@ If you cannot identify it, set identified to false and use empty strings for all
     });
 
     const data = await response.json();
-    console.error('GROQ RESPONSE:', JSON.stringify(data));
+    console.error('GROQ RESPONSE:', JSON.stringify(data).slice(0, 300));
+    
+    if (data.error) {
+      return res.status(500).json({ error: data.error.message });
+    }
+
     const text = data.choices[0].message.content;
     const clean = text.replace(/```json|```/g, '').trim();
     const result = JSON.parse(clean);
