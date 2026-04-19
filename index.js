@@ -18,7 +18,7 @@ app.post('/identify', async (req, res) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'qwen/qwen2.5-vl-72b-instruct:free',
+        model: 'meta-llama/llama-3.2-11b-vision-instruct:free',
         messages: [{
           role: 'user',
           content: [
